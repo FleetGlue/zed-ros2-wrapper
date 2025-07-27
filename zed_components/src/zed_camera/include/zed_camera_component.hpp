@@ -835,6 +835,7 @@ private:
   std::mutex mVdMutex;
   std::condition_variable mVdDataReadyCondVar;
   std::atomic_bool mVdDataReady;
+  std::mutex mSdkMutex;
   // <---- Thread Sync
 
   // ----> Status Flags

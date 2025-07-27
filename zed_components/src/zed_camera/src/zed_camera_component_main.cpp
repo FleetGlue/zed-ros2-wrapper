@@ -3199,6 +3199,7 @@ bool ZedCamera::startCamera()
     mZed->setCameraSettings(sl::VIDEO_SETTINGS::AEC_AGC, 0);
     mZed->setCameraSettings(sl::VIDEO_SETTINGS::WHITEBALANCE_AUTO, 0);
     // Force parameters with a dummy grab
+    std::lock_guard<std::mutex> lock(mSdkMutex);
     mZed->grab();
   }
 
@@ -4354,6 +4355,7 @@ void ZedCamera::threadFunc_zedGrab()
           rclcpp::sleep_for(100ms);
   #ifdef USE_SVO_REALTIME_PAUSE
           // Dummy grab
+          std::lock_guard<std::mutex> lock(mSdkMutex);
           mZed->grab();
   #endif
           continue;
@@ -4464,7 +4466,7 @@ void ZedCamera::threadFunc_zedGrab()
 
       // ZED grab
       //DEBUG_STREAM_COMM("Grab thread: grabbing frame #" << mFrameCount);
-
+      std::lock_guard<std::mutex> lock(mSdkMutex);
       mGrabStatus = mZed->grab(mRunParams);
 
       //DEBUG_COMM("Grabbed");
@@ -6740,6 +6742,7 @@ void ZedCamera::callback_setPose(
   mPosePath.clear();
 
   // Restart tracking
+  std::lock_guard<std::mutex> lock(mSdkMutex);
   startPosTracking();
 
   res->message = "Positional Tracking new pose OK";
